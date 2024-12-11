@@ -8,6 +8,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
+import java.net.URI;
 
 @RestController
 @RequestMapping("/transactions")
@@ -19,12 +22,19 @@ public class TransactionController {
     @PostMapping
     public ResponseEntity<Transaction> save(@RequestBody Transaction transaction) {
         Transaction saved = transactionService.save(transaction);
-        return ResponseEntity.ok(saved);
+        URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(saved.getId()).toUri();
+        return ResponseEntity.created(location).body(saved);
     }
 
     @GetMapping
     public ResponseEntity<Page<Transaction>> findTransactionsByUser(@RequestParam(name = "userId") String userId, @PageableDefault Pageable pageable) {
         Page<Transaction> transactionPage = transactionService.findTransactionsByUser(Long.valueOf(userId), pageable);
         return ResponseEntity.ok(transactionPage);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Transaction> findByAccountNumber(@PathVariable Long id) {
+        Transaction transaction = transactionService.findById(id);
+        return ResponseEntity.ok(transaction);
     }
 }

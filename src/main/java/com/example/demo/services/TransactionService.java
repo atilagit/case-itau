@@ -62,4 +62,8 @@ public class TransactionService {
         userService.save(receiver);
         repository.save(transaction);
     }
+
+    public Transaction findById(Long id) {
+        return repository.findById(id).orElseThrow(() -> new RuntimeException("Transação não encontrada."));
+    }
 }

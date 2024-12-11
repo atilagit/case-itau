@@ -8,6 +8,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
+import java.net.URI;
 
 @RestController
 @RequestMapping("/users")
@@ -19,7 +22,8 @@ public class UserController {
     @PostMapping
     public ResponseEntity<User> save(@RequestBody User user) {
         User saved = userService.save(user);
-        return ResponseEntity.ok(saved);
+        URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{accountNumber}").buildAndExpand(saved.getAccountNumber()).toUri();
+        return ResponseEntity.created(location).body(saved);
     }
 
     @GetMapping("/{accountNumber}")
