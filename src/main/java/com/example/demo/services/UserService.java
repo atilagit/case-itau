@@ -1,0 +1,25 @@
+package com.example.demo.services;
+
+import com.example.demo.entities.User;
+import com.example.demo.repositories.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+@Service
+public class UserService {
+
+    @Autowired
+    private UserRepository repository;
+
+    public User save(User user) {
+        return repository.save(user);
+    }
+
+    public User findById(Long id) {
+        return repository.findById(id).orElseThrow(() -> new RuntimeException("Usuário não encontrado."));
+    }
+
+    public User findByAccountNumber(String accountNumber) {
+        return repository.findByAccountNumber(accountNumber).orElseThrow(() -> new RuntimeException("Usuário não encontrado."));
+    }
+}
