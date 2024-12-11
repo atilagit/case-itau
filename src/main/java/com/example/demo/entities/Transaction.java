@@ -1,5 +1,6 @@
 package com.example.demo.entities;
 
+import com.example.demo.enums.TransactionStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -30,4 +31,6 @@ public class Transaction {
 
     private LocalDateTime timestamp;
 
+    @Enumerated(EnumType.STRING)
+    private TransactionStatus status;
 }

@@ -2,11 +2,13 @@ package com.example.demo.services;
 
 import com.example.demo.entities.Transaction;
 import com.example.demo.entities.User;
+import com.example.demo.enums.TransactionStatus;
 import com.example.demo.repositories.TransactionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -23,12 +25,23 @@ public class TransactionService {
     @Autowired
     TransactionValidation transactionValidation;
 
+    @Autowired
+    TransactionHelperService transactionHelperService;
+
+    @Transactional
     public Transaction save(Transaction transaction) {
-        User sender = userService.findById(transaction.getSender().getId());
-        User receiver = userService.findById(transaction.getReceiver().getId());
-        transactionValidation.execute(sender, transaction);
-        updateData(sender, receiver, transaction);
-        doTransaction(sender, receiver, transaction);
+        try {
+            User sender = userService.findById(transaction.getSender().getId());
+            User receiver = userService.findById(transaction.getReceiver().getId());
+            transactionValidation.execute(sender, transaction);
+            updateData(sender, receiver, transaction);
+            transaction.setStatus(TransactionStatus.COMPLETED);
+            doTransaction(sender, receiver, transaction);
+        } catch (Exception e) {
+            transaction.setStatus(TransactionStatus.FAILED);
+            transactionHelperService.saveFailedTransaction(transaction);
+            throw e;
+        }
         return transaction;
     }
 
