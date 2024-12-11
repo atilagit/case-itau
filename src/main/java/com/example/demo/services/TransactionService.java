@@ -4,6 +4,8 @@ import com.example.demo.entities.Transaction;
 import com.example.demo.entities.User;
 import com.example.demo.repositories.TransactionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -28,6 +30,10 @@ public class TransactionService {
         updateData(sender, receiver, transaction);
         doTransaction(sender, receiver, transaction);
         return transaction;
+    }
+
+    public Page<Transaction> findTransactionsByUser(Long userId, Pageable pageable) {
+        return repository.findByUserParticipation(userId, pageable);
     }
 
     private void updateData(User sender, User receiver, Transaction transaction) {
