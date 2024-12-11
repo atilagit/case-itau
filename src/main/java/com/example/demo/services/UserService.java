@@ -3,6 +3,8 @@ package com.example.demo.services;
 import com.example.demo.entities.User;
 import com.example.demo.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -21,5 +23,9 @@ public class UserService {
 
     public User findByAccountNumber(String accountNumber) {
         return repository.findByAccountNumber(accountNumber).orElseThrow(() -> new RuntimeException("Usuário não encontrado."));
+    }
+
+    public Page<User> findAll(Pageable pageable) {
+        return repository.findAll(pageable);
     }
 }
