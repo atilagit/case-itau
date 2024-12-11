@@ -3,6 +3,7 @@ package com.example.demo.services;
 import com.example.demo.entities.Transaction;
 import com.example.demo.entities.User;
 import com.example.demo.enums.TransactionStatus;
+import com.example.demo.exceptions.TransactionNotFoundException;
 import com.example.demo.repositories.TransactionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -64,6 +65,6 @@ public class TransactionService {
     }
 
     public Transaction findById(Long id) {
-        return repository.findById(id).orElseThrow(() -> new RuntimeException("Transação não encontrada."));
+        return repository.findById(id).orElseThrow(() -> new TransactionNotFoundException("Transação de id " + id + " não encontrada."));
     }
 }
