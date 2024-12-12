@@ -1,6 +1,8 @@
 package com.example.demo.controller;
 
 import com.example.demo.controller.data.requests.UserRequestDTO;
+import com.example.demo.entities.User;
+import com.example.demo.services.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +25,9 @@ class UserControllerIntegrationTest {
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    @Autowired
+    private UserService userService;
 
     @Test
     void testCreateUser() throws Exception {
@@ -56,5 +61,26 @@ class UserControllerIntegrationTest {
                 .andExpect(status().isUnprocessableEntity())
                 .andExpect(jsonPath("$.errors").isArray())
                 .andExpect(jsonPath("$.errors", org.hamcrest.Matchers.hasSize(3)));
+    }
+
+    @Test
+    void testCreateUserWithDuplicateAccountNumber() throws Exception {
+        // Arrange
+        String accountNumber = "56789";
+
+        // Create a user with the account number
+        User existingUser = new User(null, "Existing User", accountNumber, new BigDecimal("1000.00"));
+        userService.save(existingUser);
+
+        // Try to create another user with the same account number
+        UserRequestDTO newUser = new UserRequestDTO("New User", accountNumber, new BigDecimal("2000.00"));
+        String newUserJson = objectMapper.writeValueAsString(newUser);
+
+        // Act & Assert
+        mockMvc.perform(post("/api/v1/users")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(newUserJson))
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(jsonPath("$.errors[0].message").value("accountNumer 56789 já existe"));
     }
 }
