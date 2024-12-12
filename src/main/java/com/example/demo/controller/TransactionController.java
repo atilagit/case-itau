@@ -17,7 +17,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.net.URI;
 
 @RestController
-@RequestMapping("/transactions")
+@RequestMapping("/api/v1/transactions")
 public class TransactionController {
 
     @Autowired
