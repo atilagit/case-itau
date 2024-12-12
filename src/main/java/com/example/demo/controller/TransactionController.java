@@ -1,7 +1,11 @@
 package com.example.demo.controller;
 
+import com.example.demo.controller.data.requests.TransactionRequestDTO;
+import com.example.demo.controller.data.responses.TransactionResponseDTO;
+import com.example.demo.controller.mappers.TransactionMapper;
 import com.example.demo.entities.Transaction;
 import com.example.demo.services.TransactionService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -19,11 +23,15 @@ public class TransactionController {
     @Autowired
     TransactionService transactionService;
 
+    @Autowired
+    TransactionMapper mapper;
+
     @PostMapping
-    public ResponseEntity<Transaction> save(@RequestBody Transaction transaction) {
+    public ResponseEntity<TransactionResponseDTO> save(@RequestBody @Valid TransactionRequestDTO transactionDto) {
+        Transaction transaction = mapper.map(transactionDto);
         Transaction saved = transactionService.save(transaction);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(saved.getId()).toUri();
-        return ResponseEntity.created(location).body(saved);
+        return ResponseEntity.created(location).body(mapper.map(saved));
     }
 
     @GetMapping
