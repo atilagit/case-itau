@@ -1,7 +1,11 @@
 package com.example.demo.controller;
 
+import com.example.demo.controller.data.requests.UserRequestDTO;
+import com.example.demo.controller.data.responses.UserResponseDTO;
+import com.example.demo.controller.mappers.UserMapper;
 import com.example.demo.entities.User;
 import com.example.demo.services.UserService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -19,11 +23,15 @@ public class UserController {
     @Autowired
     UserService userService;
 
+    @Autowired
+    UserMapper mapper;
+
     @PostMapping
-    public ResponseEntity<User> save(@RequestBody User user) {
+    public ResponseEntity<UserResponseDTO> save(@RequestBody @Valid UserRequestDTO userDTO) {
+        User user = mapper.map(userDTO);
         User saved = userService.save(user);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{accountNumber}").buildAndExpand(saved.getAccountNumber()).toUri();
-        return ResponseEntity.created(location).body(saved);
+        return ResponseEntity.created(location).body(mapper.map(saved));
     }
 
     @GetMapping("/{accountNumber}")
