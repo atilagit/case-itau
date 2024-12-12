@@ -35,14 +35,15 @@ public class TransactionController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<Transaction>> findTransactionsByUser(@RequestParam(name = "userId") String userId, @PageableDefault Pageable pageable) {
+    public ResponseEntity<Page<TransactionResponseDTO>> findTransactionsByUser(@RequestParam(name = "userId") String userId, @PageableDefault Pageable pageable) {
         Page<Transaction> transactionPage = transactionService.findTransactionsByUser(Long.valueOf(userId), pageable);
-        return ResponseEntity.ok(transactionPage);
+        Page<TransactionResponseDTO> dtoResponse = transactionPage.map(entity -> mapper.map(entity));
+        return ResponseEntity.ok(dtoResponse);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Transaction> findByAccountNumber(@PathVariable Long id) {
+    public ResponseEntity<TransactionResponseDTO> findByAccountNumber(@PathVariable Long id) {
         Transaction transaction = transactionService.findById(id);
-        return ResponseEntity.ok(transaction);
+        return ResponseEntity.ok(mapper.map(transaction));
     }
 }

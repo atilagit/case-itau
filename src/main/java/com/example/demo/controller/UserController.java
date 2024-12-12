@@ -35,14 +35,15 @@ public class UserController {
     }
 
     @GetMapping("/{accountNumber}")
-    public ResponseEntity<User> findByAccountNumber(@PathVariable String accountNumber) {
+    public ResponseEntity<UserResponseDTO> findByAccountNumber(@PathVariable String accountNumber) {
         User user = userService.findByAccountNumber(accountNumber);
-        return ResponseEntity.ok(user);
+        return ResponseEntity.ok(mapper.map(user));
     }
 
     @GetMapping
-    public ResponseEntity<Page<User>> findAllPageable(@PageableDefault Pageable pageable) {
+    public ResponseEntity<Page<UserResponseDTO>> findAllPageable(@PageableDefault Pageable pageable) {
         Page<User> userPage = userService.findAll(pageable);
-        return ResponseEntity.ok(userPage);
+        Page<UserResponseDTO> mapped = userPage.map(entity -> mapper.map(entity));
+        return ResponseEntity.ok(mapped);
     }
 }
