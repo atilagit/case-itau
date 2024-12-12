@@ -60,7 +60,7 @@ Passo-a-passo para execução e teste local na IDE
 Passo-a-passo para execução e teste local no docker
 
 - Baixe a imagem do DockerHub: 
-  - docker pull seu-usuario/nome-da-imagem:tag
+  - docker pull atiladocker/case-itau:latest
 - Baixe a imagem do DockerHub:
     - docker run -p 8080:8080 atiladocker/case-itau:latest
 - Acesse a aplicação em `http://localhost:8080`.
