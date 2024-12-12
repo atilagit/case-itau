@@ -4,6 +4,7 @@ import com.example.demo.controller.data.StandardError;
 import com.example.demo.exceptions.TransactionNotFoundException;
 import com.example.demo.exceptions.UserNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -22,6 +23,18 @@ public class ControllerExceptionHandler {
 		err.setStatus(status.value());
 		err.setError("Recurso não encontrado");
 		err.setMessage(e.getMessage());
+		err.setPath(request.getRequestURI());
+		return ResponseEntity.status(status).body(err);
+	}
+
+	@ExceptionHandler(DataIntegrityViolationException.class)
+	public ResponseEntity<StandardError> validation(DataIntegrityViolationException e, HttpServletRequest request) {
+		HttpStatus status = HttpStatus.BAD_REQUEST;
+		StandardError err = new StandardError();
+		err.setTimestamp(Instant.now());
+		err.setStatus(status.value());
+		err.setError(e.getClass().getSimpleName());
+		err.setMessage("Violação de integridade de dados");
 		err.setPath(request.getRequestURI());
 		return ResponseEntity.status(status).body(err);
 	}
