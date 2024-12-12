@@ -65,23 +65,24 @@ class TransactionControllerTest {
     void mustFindTransactionsByUserWithoutException() {
         // Arrange
         String userId = "1";
+        TransactionStatus status = TransactionStatus.COMPLETED;
         Pageable pageable = Pageable.unpaged();
         Page<Transaction> transactionPage = new PageImpl<>(Arrays.asList(new Transaction(), new Transaction()));
         UserResponseForTransactionDTO sender = new UserResponseForTransactionDTO(1L, "Sender Name");
         UserResponseForTransactionDTO receiver = new UserResponseForTransactionDTO(2L, "Receiver Name");
         TransactionResponseDTO responseDTO = new TransactionResponseDTO(1L, TransactionStatus.COMPLETED, BigDecimal.TEN, sender, receiver);
 
-        when(transactionService.findTransactionsByUser(1L, pageable)).thenReturn(transactionPage);
+        when(transactionService.findTransactionsByUser(1L, status, pageable)).thenReturn(transactionPage);
         when(mapper.map(any(Transaction.class))).thenReturn(responseDTO);
 
         // Act
-        ResponseEntity<Page<TransactionResponseDTO>> response = transactionController.findTransactionsByUser(userId, pageable);
+        ResponseEntity<Page<TransactionResponseDTO>> response = transactionController.findTransactionsByUser(userId, status, pageable);
 
         // Assert
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
         assertEquals(2, response.getBody().getContent().size());
-        verify(transactionService).findTransactionsByUser(1L, pageable);
+        verify(transactionService).findTransactionsByUser(1L, status, pageable);
         verify(mapper, times(2)).map(any(Transaction.class));
     }
 

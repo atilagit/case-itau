@@ -46,8 +46,11 @@ public class TransactionService {
         return transaction;
     }
 
-    public Page<Transaction> findTransactionsByUser(Long userId, Pageable pageable) {
-        return repository.findByUserParticipation(userId, pageable);
+    public Page<Transaction> findTransactionsByUser(Long userId, TransactionStatus status, Pageable pageable) {
+        if (status == null) {
+            return repository.findByUserParticipation(userId, pageable);
+        }
+        return repository.findByUserParticipationAndStatus(userId, status, pageable);
     }
 
     private void updateData(User sender, User receiver, Transaction transaction) {

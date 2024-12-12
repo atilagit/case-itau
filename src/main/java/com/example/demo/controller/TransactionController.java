@@ -4,6 +4,7 @@ import com.example.demo.controller.data.requests.TransactionRequestDTO;
 import com.example.demo.controller.data.responses.TransactionResponseDTO;
 import com.example.demo.controller.mappers.TransactionMapper;
 import com.example.demo.entities.Transaction;
+import com.example.demo.enums.TransactionStatus;
 import com.example.demo.services.TransactionService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,8 +36,10 @@ public class TransactionController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<TransactionResponseDTO>> findTransactionsByUser(@RequestParam(name = "userId") String userId, @PageableDefault Pageable pageable) {
-        Page<Transaction> transactionPage = transactionService.findTransactionsByUser(Long.valueOf(userId), pageable);
+    public ResponseEntity<Page<TransactionResponseDTO>> findTransactionsByUser(@RequestParam(name = "userId") String userId,
+                                                                               @RequestParam(name = "status", required = false) TransactionStatus status,
+                                                                               @PageableDefault Pageable pageable) {
+        Page<Transaction> transactionPage = transactionService.findTransactionsByUser(Long.valueOf(userId), status, pageable);
         Page<TransactionResponseDTO> dtoResponse = transactionPage.map(entity -> mapper.map(entity));
         return ResponseEntity.ok(dtoResponse);
     }
